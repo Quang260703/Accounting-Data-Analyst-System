@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 df_bs = pd.read_excel('data.xls', sheet_name='BS', header=None).T
 df_bs.columns = df_bs.iloc[0]
@@ -25,6 +26,15 @@ df_bs.dropna(inplace=True)
 #     plt.text(x, y, f'{y:,.0f}', ha='center', va='bottom', fontsize=8, rotation=0)
 # plt.tight_layout()
 # plt.show()
-# df_pl.to_csv('export.csv', index=False)
 
-print(df_bs['Description'])
+df_ex = pd.DataFrame()
+df_ex['Date'] = pd.to_datetime(df_pl['Description']).dt.strftime('%Y-%m')
+df_ex['Total Sales'] = pd.to_numeric(df_pl['1.Sales'])
+df_ex['AR-AP'] = pd.to_numeric(df_pl['1.Sales'] - df_pl['COGS-Logistics'])
+df_ex['% AR-AP'] = pd.to_numeric(df_ex['AR-AP']/df_ex['Total Sales'] * 100).round(2)
+df_ex['Sales-COGS'] = pd.to_numeric(df_pl['1.Sales'] - df_pl['2.Cost of Goods Sold'])
+df_ex['% Sales-COGS'] = pd.to_numeric(df_ex['Sales-COGS']/df_ex['Total Sales']).round(2)
+df_ex['Operating Income'] = pd.to_numeric(df_pl['5.Operating Income **'])
+df_ex['Net Income'] = pd.to_numeric(df_pl['15.Net Income for the Year **'])
+df_ex['% Net Income'] = pd.to_numeric(df_ex['Net Income']/df_pl['1.Sales'] * 100).round(2)
+print(df_ex)
